@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiagentEnvironment", "Mu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neural", "Neural\Neural.csproj", "{8978DAA5-1558-4EA0-B827-521F83A2C0A2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Genetic", "Genetic\Genetic.csproj", "{C1E1659D-0D89-4A15-9EB7-1AA3E3E4C0F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Render", "Render\Render.csproj", "{1A5A88D0-BE32-4F7E-B222-5DD578C3BAA8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{8978DAA5-1558-4EA0-B827-521F83A2C0A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8978DAA5-1558-4EA0-B827-521F83A2C0A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8978DAA5-1558-4EA0-B827-521F83A2C0A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1E1659D-0D89-4A15-9EB7-1AA3E3E4C0F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1E1659D-0D89-4A15-9EB7-1AA3E3E4C0F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1E1659D-0D89-4A15-9EB7-1AA3E3E4C0F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1E1659D-0D89-4A15-9EB7-1AA3E3E4C0F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A5A88D0-BE32-4F7E-B222-5DD578C3BAA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A5A88D0-BE32-4F7E-B222-5DD578C3BAA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A5A88D0-BE32-4F7E-B222-5DD578C3BAA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A5A88D0-BE32-4F7E-B222-5DD578C3BAA8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
