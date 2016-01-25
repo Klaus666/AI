@@ -77,10 +77,7 @@ namespace MultiagentEnvironment
 
         private double avoidNaNAndInfinity(double x)
         {
-            if ((double.IsNaN(x)) || double.IsInfinity(x))
-            {
-                x = 0;
-            }
+            if ((double.IsNaN(x)) || double.IsInfinity(x))x = 0;
             return x;
         }
 
