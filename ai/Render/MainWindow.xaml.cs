@@ -30,6 +30,26 @@ namespace Render
 
         public class RenderObserver : EatenFoodObserver
         {
+            private MainWindow owner;
+
+            public RenderObserver(MainWindow parent)
+            {
+                owner = parent;
+            }
+
+            public override void notify(AgentsEnvironment env)
+            {
+                var e = getEatenFood(env);
+
+                owner.Dispatcher.Invoke(() =>
+                {
+                    foreach (var a in owner.Agents.ToArray())
+                        if (e.Any(f => a.agent == f))
+                            owner.Agents.Remove(a);
+                });
+
+                base.notify(env);
+            }
 
             protected override void addRandomPieceOfFood(AgentsEnvironment env)
             {
@@ -37,6 +57,10 @@ namespace Render
                 {
                     Food food = createRandomFood(env.getWidth(), env.getHeight());
                     env.addAgent(food);
+                    owner.Dispatcher.Invoke(() =>
+                    {
+                        owner.Agents.Add(new FoodPresenter(food));
+                    });
                 }
             }
         }
@@ -133,7 +157,7 @@ namespace Render
             const int w = 600;
             const int h = 400; 
             environment = new AgentsEnvironment(w, h);
-            environment.addListener(new RenderObserver());
+            environment.addListener(new RenderObserver(this));
 
             NeuralNetwork brain = ga.GetBest();
 

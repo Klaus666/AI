@@ -14,7 +14,7 @@ namespace MultiagentEnvironment
 
         private double score = 0;
 
-        public void notify(AgentsEnvironment env) {
+        public virtual void notify(AgentsEnvironment env) {
             var eatenFood = this.getEatenFood(env);
             this.score += eatenFood.Count;
 
@@ -46,7 +46,7 @@ namespace MultiagentEnvironment
             return collidedFishes;
         }
 
-        private LinkedList<Food> getEatenFood(AgentsEnvironment env) {
+        protected LinkedList<Food> getEatenFood(AgentsEnvironment env) {
             LinkedList<Food> eatenFood = new LinkedList<Food>();
 
             
