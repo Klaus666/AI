@@ -58,8 +58,8 @@ namespace Neural
             for (int i = 0; i < Params.Length; i++) ret[i] = Params[i];
             return ret;
         }
-        
-        object ICloneable.Clone()
+
+        public object Clone()
         {
             double[] cloneParams = new double[Params.Length];
             for (int i = 0; i < Params.Length; i++) cloneParams[i] = Params[i];

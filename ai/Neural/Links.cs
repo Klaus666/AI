@@ -8,7 +8,7 @@ namespace Neural
 {
     public class Links : ICloneable
     {
-        private Dictionary<int, Dictionary<int, double>> links = new Dictionary<int, Dictionary<int, double>();
+        private Dictionary<int, Dictionary<int, double>> links = new Dictionary<int, Dictionary<int, double>>();
         private int totalLinksCount = 0;
 
         public IEnumerable<int> GetReceivers(int activatorNeuronNumber)
