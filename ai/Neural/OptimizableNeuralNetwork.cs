@@ -173,7 +173,7 @@ namespace Neural
             {
                 int i = random.Next(neuronsSize);
                 if (neuronsSize > 1)
-                    while (used.Contains(i)) random.Next(neuronsSize);
+                    while (used.Contains(i)) i = random.Next(neuronsSize);
 
                 Neuron thisNeuron = thisNeurons[i];
                 Neuron anotherNeuron = anotherNeurons[i];

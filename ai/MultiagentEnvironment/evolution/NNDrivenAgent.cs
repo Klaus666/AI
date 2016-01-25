@@ -50,7 +50,7 @@ namespace MultiagentEnvironment
          * TODO Maybe consider to use non-blocking technique. But at the moment this
          * simplest solution doesn't cause any overheads
          */
-        public void interact(AgentsEnvironment env)
+        public override void interact(AgentsEnvironment env)
         {
             lock (ThisLock)
             {
