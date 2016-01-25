@@ -6,6 +6,7 @@ namespace MultiagentEnvironment
 {
     public class NeuralNetworkDrivenAgent : Agent
     {
+        private static Random random = new Random();
 
         private const double maxSpeed = 4;
 
@@ -83,7 +84,7 @@ namespace MultiagentEnvironment
             return x;
         }
 
-        private void activateNeuralNetwork(List<Double> nnInputs)
+        private void activateNeuralNetwork(List<double> nnInputs)
         {
             for (int i = 0; i < nnInputs.Count; i++)
             {
@@ -259,7 +260,7 @@ namespace MultiagentEnvironment
             {
                 for (int j = 6; j < 15; j++)
                 {
-                    nn.addLink(i, j, Math.random());
+                    nn.addLink(i, j, random.NextDouble());
                 }
             }
             for (int i = 6; i < 15; i++)
@@ -268,7 +269,7 @@ namespace MultiagentEnvironment
                 {
                     if (i < j)
                     {
-                        nn.addLink(i, j, Math.random());
+                        nn.addLink(i, j, random.NextDouble());
                     }
                 }
             }
