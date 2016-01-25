@@ -1,13 +1,10 @@
-﻿using Neural;
+﻿using Genetic;
+using Neural;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MultiagentEnvironment
 {
-    public class TournamentEnvironmentFitness : Fitness<OptimizableNeuralNetwork, Double>
+    public class TournamentEnvironmentFitness : IFitness<OptimizableNeuralNetwork, double>
     {
 
         class FitnessObserver : EatenFoodObserver
@@ -32,7 +29,7 @@ namespace MultiagentEnvironment
 
         private static Random random = new Random();
 
-        public double calculate(OptimizableNeuralNetwork chromosome)
+        public double Calculate(OptimizableNeuralNetwork chromosome)
         {
             // TODO maybe, its better to initialize these parameters in constructor
             const int width = 200;

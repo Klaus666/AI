@@ -52,6 +52,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Genetic\Genetic.csproj">
+      <Project>{c1e1659d-0d89-4a15-9eb7-1aa3e3e4c0f0}</Project>
+      <Name>Genetic</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Neural\Neural.csproj">
       <Project>{8978daa5-1558-4ea0-b827-521f83a2c0a2}</Project>
       <Name>Neural</Name>

@@ -20,9 +20,9 @@ namespace Neural
 
         public void SetFunctionAndParams(ThresholdFunction.Function Function, double[] Params)
         {
-            if (Params.Length != Neural.ThresholdFunction.GetDefaultParams(ThresholdFunction).Length)
+            if (Params.Length != Neural.ThresholdFunction.GetDefaultParams(Function).Length)
             {
-                throw new ArgumentException("Function needs " + Neural.ThresholdFunction.GetDefaultParams(ThresholdFunction).Length
+                throw new ArgumentException("Function needs " + Neural.ThresholdFunction.GetDefaultParams(Function).Length
                         + " parameters. But params count is " + Params.Length);
             }
 

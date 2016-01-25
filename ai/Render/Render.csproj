@@ -95,6 +95,20 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Genetic\Genetic.csproj">
+      <Project>{c1e1659d-0d89-4a15-9eb7-1aa3e3e4c0f0}</Project>
+      <Name>Genetic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MultiagentEnvironment\MultiagentEnvironment.csproj">
+      <Project>{1a79d704-0629-4b90-82a2-62871ad9b850}</Project>
+      <Name>MultiagentEnvironment</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Neural\Neural.csproj">
+      <Project>{8978daa5-1558-4ea0-b827-521f83a2c0a2}</Project>
+      <Name>Neural</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

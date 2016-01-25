@@ -74,7 +74,7 @@ namespace MultiagentEnvironment
             }
         }
 
-        protected void addRandomPieceOfFood(AgentsEnvironment env) {
+        protected virtual void addRandomPieceOfFood(AgentsEnvironment env) {
             int x = this.random.Next(env.getWidth());
             int y = this.random.Next(env.getHeight());
             Food newFood = new Food(x, y);

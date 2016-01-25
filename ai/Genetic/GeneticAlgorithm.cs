@@ -23,9 +23,7 @@ namespace Genetic
             public T Fit(C chr)
             {
                 T fit = default(T);
-                cache.TryGetValue(chr, out fit);
-
-                if (fit == null)
+                if (!cache.TryGetValue(chr, out fit))
                 {
                     fit = algorithm.fitnessFunc.Calculate(chr);
                     cache[chr] = fit;
