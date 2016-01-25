@@ -1,13 +1,12 @@
-﻿using System;
+﻿using Genetic;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Neural
 {
 
-    public class OptimizableNeuralNetwork : NeuralNetwork, ICloneable
+    public class OptimizableNeuralNetwork : NeuralNetwork, IChromosome<OptimizableNeuralNetwork>, ICloneable
     {
         private static class GaussianRandom
         {
