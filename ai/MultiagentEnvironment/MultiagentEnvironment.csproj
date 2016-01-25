@@ -44,10 +44,18 @@
     <Compile Include="Agent.cs" />
     <Compile Include="Environment.cs" />
     <Compile Include="evolution\EatenFoodObserver.cs" />
+    <Compile Include="evolution\NNDrivenAgent.cs" />
+    <Compile Include="evolution\TournamentFitness.cs" />
     <Compile Include="Food.cs" />
     <Compile Include="MovingFood.cs" />
     <Compile Include="Observer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Neural\Neural.csproj">
+      <Project>{8978daa5-1558-4ea0-b827-521f83a2c0a2}</Project>
+      <Name>Neural</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
