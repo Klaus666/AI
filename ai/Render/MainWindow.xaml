@@ -57,6 +57,9 @@
             <MenuItem Header="Agents">
                 <MenuItem Header="New" Click="MenuItem_Click"/>
             </MenuItem>
+            <MenuItem Header="Evolve">
+                <MenuItem Header="10" Click="MenuItem10_Click"/>
+            </MenuItem>
         </Menu>
 
         <Viewbox Grid.Row="1" Stretch="Uniform">

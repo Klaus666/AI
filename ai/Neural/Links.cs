@@ -64,7 +64,7 @@ namespace Neural
             {
                 var receiverIndxToWeight = links[activatorIndx];
 
-                foreach (var receiverIndx in receiverIndxToWeight.Keys)
+                foreach (var receiverIndx in receiverIndxToWeight.Keys.ToArray())
                 {
                     receiverIndxToWeight[receiverIndx] = weights[ind];
                     ind++;
@@ -84,6 +84,8 @@ namespace Neural
 
                 foreach (var valKey in links[key].Keys)
                     val[valKey] = links[key][valKey];
+
+                clone.links.Add(key, val);
             }
             return clone;
         }

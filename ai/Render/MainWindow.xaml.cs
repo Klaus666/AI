@@ -7,44 +7,115 @@ using Neural;
 using MultiagentEnvironment;
 using System.Collections.ObjectModel;
 using System.Threading;
+using Genetic;
 
 namespace Render
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         private static readonly Random Rnd = new Random();
 
-        private const int maxWeight = 10;
+        private static GeneticAlgorithm<OptimizableNeuralNetwork, double> ga;
 
-        private static int GetRandomWeight(Random random) => random.Next(maxWeight) - random.Next(maxWeight);
+        private static AgentsEnvironment environment;
 
-        protected NeuralNetwork CreateRandomNetwork()
+        private static int populationNumber = 0;
+
+        private static volatile bool play = true;
+
+        private static volatile bool staticFood = true;
+
+        private static volatile bool regenerateFood = true;
+
+
+        public class RenderObserver : EatenFoodObserver
         {
-            var Net = new NeuralNetwork(15);
-            for (int i = 6; i < 15; i++)
+
+            protected override void addRandomPieceOfFood(AgentsEnvironment env)
             {
-                //   var f = Transfer.Random();
-                //   Net.SetNeuronFunction(i, f, Transfer.GetDefaultParams(f));
-                Net.SetNeuronFunction(i, ThresholdFunction.Function.Sigma, ThresholdFunction.GetDefaultParams(ThresholdFunction.Function.Sigma));
+                if (regenerateFood)
+                {
+                    Food food = createRandomFood(env.getWidth(), env.getHeight());
+                    env.addAgent(food);
+                }
+            }
+        }
+
+        private static Food createRandomFood(int width, int height)
+        {
+            int x = Rnd.Next(width);
+            int y = Rnd.Next(height);
+
+            Food food = null;
+            if (staticFood)
+            {
+                food = new Food(x, y);
+            }
+            else
+            {
+                double speed = Rnd.Next() * 2;
+                double direction = Rnd.Next() * 2 * Math.PI;
+
+                food = new MovingFood(x, y, direction, speed);
+            }
+            return food;
+        }
+
+
+        private static void Evolve(int iterCount)
+        {
+            new Thread(() => {
+
+                ga.Evolve(iterCount);
+                populationNumber += iterCount;
+
+                NeuralNetwork newBrain = ga.GetBest();
+                setAgentBrains(newBrain);
+
+            }).Start();
+        }
+
+
+        private static void initializeGeneticAlgorithm(
+            int populationSize,
+            int parentalChromosomesSurviveCount,
+            OptimizableNeuralNetwork baseNeuralNetwork)
+        {
+            Population<OptimizableNeuralNetwork> brains = new Population<OptimizableNeuralNetwork>();
+
+            for (int i = 0; i < (populationSize - 1); i++)
+            {
+                if (baseNeuralNetwork == null)
+                {
+                    brains.addChromosome(NeuralNetworkDrivenAgent.randomNeuralNetworkBrain());
+                }
+                else
+                {
+                    brains.addChromosome(baseNeuralNetwork.Mutate());
+                }
+            }
+            if (baseNeuralNetwork != null)
+            {
+                brains.addChromosome(baseNeuralNetwork);
+            }
+            else
+            {
+                brains.addChromosome(NeuralNetworkDrivenAgent.randomNeuralNetworkBrain());
             }
 
-            for (int i = 0; i < 6; i++) Net.SetNeuronFunction(i, ThresholdFunction.Function.Linear, ThresholdFunction.GetDefaultParams(ThresholdFunction.Function.Linear));
+            IFitness<OptimizableNeuralNetwork, double> fit = new TournamentEnvironmentFitness();
 
-            var input = Net.MarkupLayer(0, 6);
-            var hidden = Net.MarkupLayer(6, 9);
-            var output = Net.MarkupLayer(13, 2);
+            ga = new GeneticAlgorithm<OptimizableNeuralNetwork, double>(brains, fit);
 
-            Net.SetOutputLayer(output);
-            Net.SetInputLayer(input);
+            ga.SetParentChromosomesSurviveCount(parentalChromosomesSurviveCount);
+        }
 
-            var firstbus = Net.ConnectLayers(input, hidden, false, (a, b) => GetRandomWeight(Rnd));
-            var secondbus = Net.ConnectLayers(hidden, hidden, true, (a, b) => GetRandomWeight(Rnd));
-
-            Net.SetActivationOrder(firstbus, secondbus);
-            return Net;
+        private static void setAgentBrains(NeuralNetwork newBrain)
+        {
+            foreach (NeuralNetworkDrivenAgent agent in environment.filter<NeuralNetworkDrivenAgent>())
+            {
+                agent.setBrain(newBrain.Clone() as NeuralNetwork);
+            }
         }
 
         public MainWindow()
@@ -52,41 +123,62 @@ namespace Render
             InitializeComponent();
             Agents = new ObservableCollection<AgentPresenter>();
 
-            Neural = CreateRandomNetwork();
+            initializeGeneticAlgorithm(5, 1, null);
 
-            Scene.OnFoodEaten += (potato) =>
+            const int w = 600;
+            const int h = 400; 
+            environment = new AgentsEnvironment(w, h);
+            environment.addListener(new RenderObserver());
+
+            NeuralNetwork brain = ga.GetBest();
+
+            for (int i = 0; i < 15; i++)
             {
-                var agent = Agents.OfType<FoodPresenter>().SingleOrDefault(f => potato == f.Agent);
-                if (agent != null) Agents.Remove(agent);
-            };
+                int x = Rnd.Next(w);
+                int y = Rnd.Next(h);
+                double direction = Rnd.NextDouble() * 2 * Math.PI;
+
+                NeuralNetworkDrivenAgent agent = new NeuralNetworkDrivenAgent(x, y, direction);
+                agent.setBrain(brain);
+
+                Agents.Add(new ConsumerPresenter(agent));
+
+                environment.addAgent(agent);
+            }
+
+            for (int i = 0; i < 10; i++)
+            {
+                Food food = createRandomFood(w, h);
+                environment.addAgent(food);
+                Agents.Add(new FoodPresenter(food));
+            }
+
 
             new Thread(() =>
             {
                 while (true)
                     try
                     {
-                        var time = DateTime.Now;
-
-                        Dispatcher.Invoke(() =>
+                        Thread.Sleep(50);
+                        if (play)
                         {
-                            Scene.Animate();
-                            foreach (var agent in Agents.OfType<ConsumerPresenter>())
-                            {
-                                agent.X = agent.agent.getX() * 1000.0;
-                                agent.Y = agent.agent.getX() * 1000.0;
-                                agent.Angle = agent.agent.getAngle() * 180 / Math.PI;
-                                if ((agent.agent as Environment.Consumer).IsSick) agent.Foreground = Brushes.LightGray;
-                            }
-                        });
+                            environment.timeStep();
 
-                        Thread.Sleep(TimeSpan.FromMilliseconds(Math.Max((time + TimeSpan.FromMilliseconds(100) - DateTime.Now).TotalMilliseconds, 0)));
+                            Dispatcher.Invoke(() =>
+                            {
+                                foreach (var pres in Agents)
+                                {
+                                    pres.X = pres.agent.getX() * 1000 / w;
+                                    pres.Y = pres.agent.getY() * 1000 / h;
+                                    var cons = pres as ConsumerPresenter;
+                                    if (cons != null) cons.Angle = (cons.agent as NeuralNetworkDrivenAgent).getAngle() * 180 / Math.PI;
+                                }
+                            });
+                        }
                     }
                     catch { break; }
             }).Start();
         }
-
-        private NeuralNetwork Neural;
-        private readonly AgentsEnvironment Scene = new AgentsEnvironment(200, 200);
 
         public ObservableCollection<AgentPresenter> Agents
         {
@@ -97,10 +189,10 @@ namespace Render
 
         private void ItemsControl_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            Point p = e.GetPosition(sender as Control);
+         /*   Point p = e.GetPosition(sender as Control);
             var food = new Food(p.X / 1000, p.Y / 1000);
             Agents.Add(new FoodPresenter(food) { X = p.X, Y = p.Y });
-            Scene.Add(food);
+            Scene.Add(food);*/
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -109,17 +201,22 @@ namespace Render
             var ry = Rnd.NextDouble();
             var ra = Rnd.NextDouble();
 
-            var agent = new Environment.Consumer(Neural.Duplicate(), rx, ry, ra);
-            Scene.Add(agent);
+            var agent = new NeuralNetworkDrivenAgent(rx, ry, ra);
+            environment.addAgent(agent);
             Agents.Add(new ConsumerPresenter(agent) { X = 1000.0 * rx, Y = 1000.0 * ry, Angle = 360.0 * ra });
+        }
+
+        private void MenuItem10_Click(object sender, RoutedEventArgs e)
+        {
+            Evolve(10);
         }
     }
 
     public abstract class AgentPresenter : Control
     {
-        public Agent agent { get; }
+        public AbstractAgent agent { get; }
 
-        public AgentPresenter(Agent Agent)
+        public AgentPresenter(AbstractAgent Agent)
         {
             agent = Agent;
         }
@@ -146,7 +243,7 @@ namespace Render
 
     public class FoodPresenter : AgentPresenter
     {
-        public FoodPresenter(Agent Agent) : base(Agent) { }
+        public FoodPresenter(AbstractAgent Agent) : base(Agent) { }
 
         static FoodPresenter()
         {
