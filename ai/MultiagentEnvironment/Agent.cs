@@ -2,7 +2,7 @@
 
 namespace MultiagentEnvironment
 {
-    public class Agent : AbstractAgent
+    public abstract class Agent : AbstractAgent
     {
 
         private double x;
@@ -70,9 +70,7 @@ namespace MultiagentEnvironment
             return ry;
         }
 
-        public virtual void interact(AgentsEnvironment env) {
-            // Stub
-        }
+        public abstract void interact(AgentsEnvironment env);
 
     }
 

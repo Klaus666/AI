@@ -62,7 +62,7 @@ namespace Render
         }
 
 
-        private static void Evolve(int iterCount)
+        private void Evolve(int iterCount)
         {
             new Thread(() => {
 
@@ -71,6 +71,11 @@ namespace Render
 
                 NeuralNetwork newBrain = ga.GetBest();
                 setAgentBrains(newBrain);
+
+                Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show("evolved");
+                });
 
             }).Start();
         }
