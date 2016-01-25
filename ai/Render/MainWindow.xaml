@@ -6,7 +6,72 @@
         xmlns:local="clr-namespace:Render"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
+    <Window.Resources>
+
+        <Style TargetType="{x:Type local:FoodPresenter}">
+            <Setter Property="ToolTip" Value="A piece of food."/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type local:FoodPresenter}">
+                        <Ellipse Fill="SkyBlue" Width="30" Height="30" Stroke="Blue" StrokeThickness="1">
+                            <Ellipse.RenderTransform>
+                                <TransformGroup>
+                                    <TranslateTransform X="-15" Y="-15"/>
+                                    <TranslateTransform X="{Binding X, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" 
+                                                        Y="{Binding Y, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"/>
+                                </TransformGroup>
+                            </Ellipse.RenderTransform>
+                        </Ellipse>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="{x:Type local:ConsumerPresenter}">
+            <Setter Property="ToolTip" Value="A food consumer."/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type local:ConsumerPresenter}">
+                        <Polygon Points="-15,-15 0,15, 15,-15 0,-8" Stroke="Black" Fill="{Binding Foreground, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}">
+                            <Polygon.RenderTransform>
+                                <TransformGroup>
+                                    <RotateTransform Angle="{Binding Angle, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"/>
+                                    <TranslateTransform X="{Binding X, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" 
+                                                        Y="{Binding Y, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"/>
+                                </TransformGroup>
+                            </Polygon.RenderTransform>
+                        </Polygon>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Menu >
+            <MenuItem Header="Agents">
+                <MenuItem Header="New" Click="MenuItem_Click"/>
+            </MenuItem>
+        </Menu>
+
+        <Viewbox Grid.Row="1" Stretch="Uniform">
+            <Border Margin="25" BorderBrush="Blue" BorderThickness="1">
+                <ItemsControl ItemsSource="{Binding Agents, Mode=OneWay, RelativeSource={RelativeSource AncestorType=Window}}" 
+                              MouseDown="ItemsControl_MouseDown">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas Width="1000" Height="1000" Background="GhostWhite"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </Border>
+        </Viewbox>
+
     </Grid>
 </Window>
+
