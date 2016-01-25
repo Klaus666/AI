@@ -49,7 +49,7 @@ namespace Genetic
 
         private readonly ChromosomesComparator chromosomesComparator;
 
-        private readonly Fitness<C, T> fitnessFunc;
+        private readonly IFitness<C, T> fitnessFunc;
 
         private Population<C> population;
 
@@ -61,7 +61,7 @@ namespace Genetic
 
         private int iteration = 0;
 
-        public GeneticAlgorithm(Population<C> population, Fitness<C, T> fitnessFunc)
+        public GeneticAlgorithm(Population<C> population, IFitness<C, T> fitnessFunc)
         {
             this.population = population;
             this.fitnessFunc = fitnessFunc;

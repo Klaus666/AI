@@ -13,7 +13,7 @@ namespace Genetic
         C Mutate();
     }
 
-    public interface Fitness<C, T>
+    public interface IFitness<C, T>
         where C : IChromosome<C>
         where T : IComparable<T>
     {
