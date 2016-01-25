@@ -58,9 +58,9 @@ namespace MultiagentEnvironment
 
                 activateNeuralNetwork(nnInputs);
 
-                int neuronsCount = brain.getNeuronsCount();
-                double deltaAngle = brain.getAfterActivationSignal(neuronsCount - 2);
-                double deltaSpeed = brain.getAfterActivationSignal(neuronsCount - 1);
+                int neuronsCount = brain.GetNeuronsCount();
+                double deltaAngle = brain.GetAfterActivationSignal(neuronsCount - 2);
+                double deltaSpeed = brain.GetAfterActivationSignal(neuronsCount - 1);
 
                 deltaSpeed = avoidNaNAndInfinity(deltaSpeed);
                 deltaAngle = avoidNaNAndInfinity(deltaAngle);
@@ -85,12 +85,12 @@ namespace MultiagentEnvironment
         {
             for (int i = 0; i < nnInputs.Count; i++)
             {
-                brain.putSignalToNeuron(i, nnInputs[i]);
+                brain.PutSignalToNeuron(i, nnInputs[i]);
             }
-            brain.activate();
+            brain.Activate();
         }
 
-        protected LinkedList<double> createNnInputs(AgentsEnvironment environment)
+        protected List<double> createNnInputs(AgentsEnvironment environment)
         {
             // Find nearest food
             Food nearestFood = null;
@@ -128,7 +128,7 @@ namespace MultiagentEnvironment
                 }
             }
 
-            var nnInputs = new LinkedList<double>();
+            var nnInputs = new List<double>();
 
             double rx = getRx();
             double ry = getRy();
@@ -146,16 +146,16 @@ namespace MultiagentEnvironment
                         Math.Sign(pseudoScalarProduct(rx, ry, foodDirectionVectorX, foodDirectionVectorY))
                                 * cosTeta(rx, ry, foodDirectionVectorX, foodDirectionVectorY);
 
-                nnInputs.AddLast(FOOD);
-                nnInputs.AddLast(nearestFoodDist);
-                nnInputs.AddLast(foodDirectionCosTeta);
+                nnInputs.Add(FOOD);
+                nnInputs.Add(nearestFoodDist);
+                nnInputs.Add(foodDirectionCosTeta);
 
             }
             else
             {
-                nnInputs.AddLast(EMPTY);
-                nnInputs.AddLast(0.0);
-                nnInputs.AddLast(0.0);
+                nnInputs.Add(EMPTY);
+                nnInputs.Add(0.0);
+                nnInputs.Add(0.0);
             }
 
             if (nearestAgent != null)
@@ -168,16 +168,16 @@ namespace MultiagentEnvironment
                         Math.Sign(pseudoScalarProduct(rx, ry, agentDirectionVectorX, agentDirectionVectorY))
                                 * cosTeta(rx, ry, agentDirectionVectorX, agentDirectionVectorY);
 
-                nnInputs.AddLast(AGENT);
-                nnInputs.AddLast(nearestAgentDist);
-                nnInputs.AddLast(agentDirectionCosTeta);
+                nnInputs.Add(AGENT);
+                nnInputs.Add(nearestAgentDist);
+                nnInputs.Add(agentDirectionCosTeta);
 
             }
             else
             {
-                nnInputs.AddLast(EMPTY);
-                nnInputs.AddLast(0.0);
-                nnInputs.AddLast(0.0);
+                nnInputs.Add(EMPTY);
+                nnInputs.Add(0.0);
+                nnInputs.Add(0.0);
             }
             return nnInputs;
         }
@@ -247,17 +247,17 @@ namespace MultiagentEnvironment
             for (int i = 0; i < 15; i++)
             {
                 var f = ThresholdFunction.Random();
-                nn.setNeuronFunction(i, f, ThresholdFunction.GetDefaultParams(f));
+                nn.SetNeuronFunction(i, f, ThresholdFunction.GetDefaultParams(f));
             }
             for (int i = 0; i < 6; i++)
             {
-                nn.setNeuronFunction(i, ThresholdFunction.Function.Linear, ThresholdFunction.GetDefaultParams(ThresholdFunction.Function.Linear));
+                nn.SetNeuronFunction(i, ThresholdFunction.Function.Linear, ThresholdFunction.GetDefaultParams(ThresholdFunction.Function.Linear));
             }
             for (int i = 0; i < 6; i++)
             {
                 for (int j = 6; j < 15; j++)
                 {
-                    nn.addLink(i, j, random.NextDouble());
+                    nn.AddLink(i, j, random.NextDouble());
                 }
             }
             for (int i = 6; i < 15; i++)
@@ -266,7 +266,7 @@ namespace MultiagentEnvironment
                 {
                     if (i < j)
                     {
-                        nn.addLink(i, j, random.NextDouble());
+                        nn.AddLink(i, j, random.NextDouble());
                     }
                 }
             }
