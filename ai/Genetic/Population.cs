@@ -17,10 +17,7 @@ namespace Genetic
             chromosomes.Add(chromosome);
         }
 
-        public int GetSize()
-        {
-            return chromosomes.Count;
-        }
+        public int Size => chromosomes.Count;
 
         public C GetRandomChromosome()
         {

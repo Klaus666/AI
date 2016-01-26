@@ -9,85 +9,77 @@ namespace Genetic
         where C : IChromosome<C>
         where T : IComparable<T>
     {
+        public delegate void OnIterationComplete(GeneticAlgorithm<C, T> environment);
+
+        #region ChromosomesComparator
         private readonly Dictionary<C, T> fitness_cache = new Dictionary<C, T>();
-
-
-
-        private const int ALL_PARENTAL_CHROMOSOMES = int.MaxValue;
 
         private class ChromosomesComparator : IComparer<C>
         {
-            private GeneticAlgorithm<C, T> context;
+            private readonly GeneticAlgorithm<C, T> context;
+            private readonly IFitness<C, T> fitnessFunc;
 
-            public ChromosomesComparator(GeneticAlgorithm<C, T> algorithm)
+            public ChromosomesComparator(GeneticAlgorithm<C, T> algorithm, IFitness<C, T> fitness)
             {
                 context = algorithm;
+                fitnessFunc = fitness;
             }
-
+            
             public T Fit(C chr)
             {
                 T fit = default(T);
                 if (!context.fitness_cache.TryGetValue(chr, out fit))
                 {
-                    fit = context.fitnessFunc.Calculate(chr);
+                    fit = fitnessFunc.Calculate(chr);
                     context.fitness_cache[chr] = fit;
                 }
                 return fit;
-            }
-
-            public void ClearCache()
-            {
-                context.fitness_cache.Clear();
             }
 
             public int Compare(C chr1, C chr2)
             {
                 T fit1 = Fit(chr1);
                 T fit2 = Fit(chr2);
-                int ret = fit1.CompareTo(fit2);
-                return ret;
+                return fit1.CompareTo(fit2);
             }
         }
 
         private readonly ChromosomesComparator chromosomesComparator;
+        #endregion
 
-        private readonly IFitness<C, T> fitnessFunc;
 
-        private Population<C> population;
+        public Population<C> Population { get; private set; }
 
-        private List<IIterationListener<C, T>> iterationListeners = new List<IIterationListener<C, T>>();
+        public event OnIterationComplete IterationComplete;
 
         private bool terminate = false;
 
-        private int parentChromosomesSurviveCount = ALL_PARENTAL_CHROMOSOMES;
+        public int ParentChromosomesSurviveCount { get; set; } = int.MaxValue;
 
-        private int iteration = 0;
+        public int Iteration { get; private set; } = 0;
 
         public GeneticAlgorithm(Population<C> population, IFitness<C, T> fitnessFunc)
         {
-            this.population = population;
-            this.fitnessFunc = fitnessFunc;
-            chromosomesComparator = new ChromosomesComparator(this);
-            this.population.SortPopulationByFitness(chromosomesComparator);
+            Population = population;
+            chromosomesComparator = new ChromosomesComparator(this, fitnessFunc);
+            Population.SortPopulationByFitness(chromosomesComparator);
         }
 
         public void Evolve()
         {
-            int parentPopulationSize = population.Count();
-
             var newPopulation = new Population<C>();
 
-            var surviver_count = Math.Min(parentPopulationSize, parentChromosomesSurviveCount);
+            var surviver_count = Math.Min(Population.Size, ParentChromosomesSurviveCount);
 
             for (int i = 0; i < surviver_count; i++)
-                newPopulation.addChromosome(population.GetChromosomeByIndex(i));
+                newPopulation.addChromosome(Population.GetChromosomeByIndex(i));
 
-            for (int i = 0; i < parentPopulationSize; i++)
+            for (int i = 0; i < Population.Size; i++)
             {
-                var chromosome = population.GetChromosomeByIndex(i);
+                var chromosome = Population.GetChromosomeByIndex(i);
                 var mutated = chromosome.Mutate();
 
-                var otherChromosome = population.GetRandomChromosome();
+                var otherChromosome = Population.GetRandomChromosome();
                 var crossovered = chromosome.Crossover(otherChromosome);
 
                 newPopulation.addChromosome(mutated);
@@ -96,8 +88,8 @@ namespace Genetic
             }
 
             newPopulation.SortPopulationByFitness(chromosomesComparator);
-            newPopulation.Trim(parentPopulationSize);
-            population = newPopulation;
+            newPopulation.Trim(Population.Size);
+            Population = newPopulation;
 
             foreach (var corpse in fitness_cache.Keys.Except(new HashSet<C>(newPopulation)).ToArray()) fitness_cache.Remove(corpse);
         }
@@ -111,64 +103,13 @@ namespace Genetic
                 if (terminate) break;
 
                 Evolve();
-                iteration = i;
-                foreach (var l in iterationListeners) l.Update(this);
+                Iteration = i;
+                if (IterationComplete != null) IterationComplete(this);
             }
         }
 
-        public int GetIteration()
-        {
-            return iteration;
-        }
+        public void Terminate() => terminate = true;
 
-        public void Terminate()
-        {
-            terminate = true;
-        }
-
-        public Population<C> GetPopulation()
-        {
-            return population;
-        }
-
-        public C GetBest()
-        {
-            return population.GetChromosomeByIndex(0);
-        }
-
-        public C GetWorst()
-        {
-            return population.GetChromosomeByIndex(population.Count() - 1);
-        }
-
-        public void SetParentChromosomesSurviveCount(int parentChromosomesCount)
-        {
-            parentChromosomesSurviveCount = parentChromosomesCount;
-        }
-
-        public int GetParentChromosomesSurviveCount()
-        {
-            return parentChromosomesSurviveCount;
-        }
-
-        public void AddIterationListener(IIterationListener<C, T> listener)
-        {
-            iterationListeners.Add(listener);
-        }
-
-        public void removeIterationListener(IIterationListener<C, T> listener)
-        {
-            iterationListeners.Remove(listener);
-        }
-
-        public T Fitness(C chromosome)
-        {
-            return chromosomesComparator.Fit(chromosome);
-        }
-
-        public void ClearCache()
-        {
-            chromosomesComparator.ClearCache();
-        }
+        public C GetBest() => Population.GetChromosomeByIndex(0);
     }
 }

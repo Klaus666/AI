@@ -137,7 +137,7 @@ namespace Render
 
             ga = new GeneticAlgorithm<OptimizableNeuralNetwork, double>(brains, fit);
 
-            ga.SetParentChromosomesSurviveCount(parentalChromosomesSurviveCount);
+            ga.ParentChromosomesSurviveCount = parentalChromosomesSurviveCount;
         }
 
         private static void setAgentBrains(NeuralNetwork newBrain)

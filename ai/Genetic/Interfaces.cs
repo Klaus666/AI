@@ -20,10 +20,4 @@ namespace Genetic
         T Calculate(C chromosome);
     }
 
-    public interface IIterationListener<C, T>
-        where C : IChromosome<C>
-        where T : IComparable<T>
-    {
-        void Update(GeneticAlgorithm<C, T> environment);
-    }
 }
