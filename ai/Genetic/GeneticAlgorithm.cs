@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Genetic
@@ -8,32 +9,35 @@ namespace Genetic
         where C : IChromosome<C>
         where T : IComparable<T>
     {
+        private readonly Dictionary<C, T> fitness_cache = new Dictionary<C, T>();
+
+
+
         private const int ALL_PARENTAL_CHROMOSOMES = int.MaxValue;
 
         private class ChromosomesComparator : IComparer<C>
         {
-            private Dictionary<C, T> cache = new Dictionary<C, T>();
-            private GeneticAlgorithm<C, T> algorithm;
+            private GeneticAlgorithm<C, T> context;
 
             public ChromosomesComparator(GeneticAlgorithm<C, T> algorithm)
             {
-                this.algorithm = algorithm;
+                context = algorithm;
             }
 
             public T Fit(C chr)
             {
                 T fit = default(T);
-                if (!cache.TryGetValue(chr, out fit))
+                if (!context.fitness_cache.TryGetValue(chr, out fit))
                 {
-                    fit = algorithm.fitnessFunc.Calculate(chr);
-                    cache[chr] = fit;
+                    fit = context.fitnessFunc.Calculate(chr);
+                    context.fitness_cache[chr] = fit;
                 }
                 return fit;
             }
 
             public void ClearCache()
             {
-                cache.Clear();
+                context.fitness_cache.Clear();
             }
 
             public int Compare(C chr1, C chr2)
@@ -73,7 +77,9 @@ namespace Genetic
 
             var newPopulation = new Population<C>();
 
-            for (int i = 0; (i < parentPopulationSize) && (i < parentChromosomesSurviveCount); i++)
+            var surviver_count = Math.Min(parentPopulationSize, parentChromosomesSurviveCount);
+
+            for (int i = 0; i < surviver_count; i++)
                 newPopulation.addChromosome(population.GetChromosomeByIndex(i));
 
             for (int i = 0; i < parentPopulationSize; i++)
@@ -92,6 +98,8 @@ namespace Genetic
             newPopulation.SortPopulationByFitness(chromosomesComparator);
             newPopulation.Trim(parentPopulationSize);
             population = newPopulation;
+
+            foreach (var corpse in fitness_cache.Keys.Except(new HashSet<C>(newPopulation)).ToArray()) fitness_cache.Remove(corpse);
         }
 
         public void Evolve(int count)
