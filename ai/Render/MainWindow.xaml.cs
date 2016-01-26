@@ -117,20 +117,20 @@ namespace Render
             {
                 if (baseNeuralNetwork == null)
                 {
-                    brains.addChromosome(NeuralNetworkDrivenAgent.randomNeuralNetworkBrain());
+                    brains.Add(NeuralNetworkDrivenAgent.randomNeuralNetworkBrain());
                 }
                 else
                 {
-                    brains.addChromosome(baseNeuralNetwork.Mutate());
+                    brains.Add(baseNeuralNetwork.Mutate());
                 }
             }
             if (baseNeuralNetwork != null)
             {
-                brains.addChromosome(baseNeuralNetwork);
+                brains.Add(baseNeuralNetwork);
             }
             else
             {
-                brains.addChromosome(NeuralNetworkDrivenAgent.randomNeuralNetworkBrain());
+                brains.Add(NeuralNetworkDrivenAgent.randomNeuralNetworkBrain());
             }
 
             ga = new GeneticAlgorithm<OptimizableNeuralNetwork, double>(brains, TournamentEnvironmentFitness.Calculate);

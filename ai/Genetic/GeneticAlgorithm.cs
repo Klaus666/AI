@@ -72,19 +72,19 @@ namespace Genetic
             var surviver_count = Math.Min(Population.Size, ParentChromosomesSurviveCount);
 
             for (int i = 0; i < surviver_count; i++)
-                newPopulation.addChromosome(Population.GetChromosomeByIndex(i));
+                newPopulation.Add(Population[i]);
 
             for (int i = 0; i < Population.Size; i++)
             {
-                var chromosome = Population.GetChromosomeByIndex(i);
+                var chromosome = Population[i];
                 var mutated = chromosome.Mutate();
 
                 var otherChromosome = Population.GetRandomChromosome();
                 var crossovered = chromosome.Crossover(otherChromosome);
 
-                newPopulation.addChromosome(mutated);
+                newPopulation.Add(mutated);
                 foreach (var c in crossovered)
-                    newPopulation.addChromosome(c);
+                    newPopulation.Add(c);
             }
 
             newPopulation.SortPopulationByFitness(chromosomesComparator);
@@ -110,6 +110,6 @@ namespace Genetic
 
         public void Terminate() => terminate = true;
 
-        public C GetBest() => Population.GetChromosomeByIndex(0);
+        public C GetBest() => Population[0];
     }
 }
