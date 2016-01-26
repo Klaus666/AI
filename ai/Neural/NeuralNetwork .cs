@@ -2,7 +2,7 @@
 
 namespace Neural
 {
-    public class NeuralNetwork : ICloneable
+    public class NeuralNetwork
     {
         protected Neuron[] Neurons;
         protected Links NeuronsLinks = new Links();
@@ -39,7 +39,7 @@ namespace Neural
         public double GetAfterActivationSignal(int neuronIndx)
         {
             if (neuronIndx < Neurons.Length)
-                return Neurons[neuronIndx].GetAfterActivationSignal();
+                return Neurons[neuronIndx].AfterActivationSignal;
             else
                 throw new ArgumentException();
         }
@@ -51,7 +51,7 @@ namespace Neural
                 {
                     var activator = Neurons[i];
                     activator.Activate();
-                    double activatorSignal = activator.GetAfterActivationSignal();
+                    double activatorSignal = activator.AfterActivationSignal;
 
                     foreach (var receiverNum in NeuronsLinks.GetReceivers(i))
                     {
@@ -74,7 +74,7 @@ namespace Neural
         {
             var ret = new Neuron[Neurons.Length];
             for (int n = 0; n < Neurons.Length; n++)
-                ret[n] = Neurons[n].Clone() as Neuron;
+                ret[n] = Neurons[n].Clone();
 
             return ret;
         }
@@ -83,17 +83,21 @@ namespace Neural
 
         public Links GetNeuronsLinks() => NeuronsLinks.Clone();
 
-        public object Clone()
+        public virtual NeuralNetwork Clone()
         {
             var clone = new NeuralNetwork(Neurons.Length);
+            CopyParameters(clone);
+            return clone;
+        }
+
+        protected void CopyParameters(NeuralNetwork clone)
+        {
             clone.NeuronsLinks = NeuronsLinks.Clone();
             clone.ActivationIterations = ActivationIterations;
 
             clone.Neurons = new Neuron[Neurons.Length];
             for (int n = 0; n < Neurons.Length; n++)
-                clone.Neurons[n] = Neurons[n].Clone() as Neuron;
-
-            return clone;
+                clone.Neurons[n] = Neurons[n].Clone();
         }
     }
 }
