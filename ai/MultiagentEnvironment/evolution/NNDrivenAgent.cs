@@ -1,6 +1,7 @@
 ﻿using Neural;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MultiagentEnvironment
 {
@@ -93,7 +94,7 @@ namespace MultiagentEnvironment
             Food nearestFood = null;
             double nearestFoodDist = double.MaxValue;
 
-            foreach (Food currFood in environment.filter<Food>())
+            foreach (Food currFood in environment.getAgents().OfType<Food>())
             {
                 // agent can see only ahead
                 if (this.inSight(currFood))
@@ -111,7 +112,7 @@ namespace MultiagentEnvironment
             Agent nearestAgent = null;
             double nearestAgentDist = maxAgentsDistance;
 
-            foreach (Agent currAgent in environment.filter<Agent>())
+            foreach (Agent currAgent in environment.getAgents().OfType<Agent>())
             {
                 // agent can see only ahead
                 if ((this != currAgent) && (this.inSight(currAgent)))

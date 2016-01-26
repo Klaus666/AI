@@ -140,7 +140,7 @@ namespace Render
 
         private static void setAgentBrains(NeuralNetwork newBrain)
         {
-            foreach (NeuralNetworkDrivenAgent agent in environment.filter<NeuralNetworkDrivenAgent>())
+            foreach (NeuralNetworkDrivenAgent agent in environment.getAgents().OfType<NeuralNetworkDrivenAgent>())
             {
                 agent.setBrain(newBrain.Clone() as NeuralNetwork);
             }

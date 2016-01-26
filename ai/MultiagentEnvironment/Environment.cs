@@ -64,20 +64,6 @@ namespace MultiagentEnvironment
         {
             lock (this_lock) agents.Remove(agent);
         }
-
-
-        public IEnumerable<T> filter<T>() where T : IAbstractAgent
-        {
-            LinkedList<T> filtered = new LinkedList<T>();
-            foreach (IAbstractAgent agent in this.getAgents())
-            {
-                if (agent is T)
-                {
-                    filtered.AddLast((T)agent);
-                }
-            }
-            return filtered;
-        }
     }
 
 }

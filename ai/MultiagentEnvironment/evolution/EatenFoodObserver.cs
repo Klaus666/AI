@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MultiagentEnvironment
 {
@@ -82,7 +83,7 @@ namespace MultiagentEnvironment
 
         private List<Food> getFood(AgentsEnvironment env) {
             List<Food> food = new List<Food>();
-            foreach (Food f in env.filter<Food>()) {
+            foreach (Food f in env.getAgents().OfType<Food>()) {
                 food.Add(f);
             }
             return food;
@@ -91,7 +92,7 @@ namespace MultiagentEnvironment
         private List<Agent> getFishes(AgentsEnvironment env)
         {
             List<Agent> fishes = new List<Agent>();
-            foreach (Agent agent in env.filter<Agent>()) {
+            foreach (Agent agent in env.getAgents().OfType<Agent>()) {
                 fishes.Add(agent);
             }
             return fishes;
