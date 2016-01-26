@@ -2,26 +2,22 @@
 
 namespace MultiagentEnvironment
 {
+    public delegate void OnAgentsEvent(AgentsEnvironment env);
+
     public class AgentsEnvironment
     {
-
         public int Width { get; private set; }
 
         public int Height { get; private set; }
 
         private List<IAbstractAgent> agents = new List<IAbstractAgent>();
 
-        private List<AgentsEnvironmentObserver> listeners = new List<AgentsEnvironmentObserver>();
+        public event OnAgentsEvent AgentEvent;
 
         public AgentsEnvironment(int width, int height)
         {
             Width = width;
             Height = height;
-        }
-
-        public void addListener(AgentsEnvironmentObserver listener)
-        {
-            listeners.Add(listener);
         }
 
         private readonly object this_lock = new object();
@@ -35,10 +31,7 @@ namespace MultiagentEnvironment
                     agent.Interact(this);
                     avoidMovingOutsideOfBounds(agent);
                 }
-                foreach (AgentsEnvironmentObserver l in this.listeners)
-                {
-                    l.notify(this);
-                }
+                if (AgentEvent != null) AgentEvent(this);
             }
         }
 

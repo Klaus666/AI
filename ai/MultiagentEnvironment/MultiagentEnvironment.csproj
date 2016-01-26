@@ -48,7 +48,6 @@
     <Compile Include="evolution\TournamentFitness.cs" />
     <Compile Include="Food.cs" />
     <Compile Include="MovingFood.cs" />
-    <Compile Include="Observer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

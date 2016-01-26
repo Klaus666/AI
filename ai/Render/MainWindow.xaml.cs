@@ -156,7 +156,7 @@ namespace Render
             const int w = 600;
             const int h = 400; 
             environment = new AgentsEnvironment(w, h);
-            environment.addListener(new RenderObserver(this));
+            environment.AgentEvent += new RenderObserver(this).notify;
 
             NeuralNetwork brain = ga.GetBest();
 

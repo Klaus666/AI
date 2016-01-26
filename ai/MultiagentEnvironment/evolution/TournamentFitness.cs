@@ -57,7 +57,7 @@ namespace MultiagentEnvironment
             }
 
             EatenFoodObserver tournamentListener = new FitnessObserver(width, height);
-            env.addListener(tournamentListener);
+            env.AgentEvent += tournamentListener.notify;
 
             for (int i = 0; i < environmentIterations; i++)
             {
