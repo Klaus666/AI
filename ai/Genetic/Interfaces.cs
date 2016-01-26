@@ -12,12 +12,4 @@ namespace Genetic
 
         C Mutate();
     }
-
-    public interface IFitness<C, T>
-        where C : IChromosome<C>
-        where T : IComparable<T>
-    {
-        T Calculate(C chromosome);
-    }
-
 }

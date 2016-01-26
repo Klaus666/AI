@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace Genetic
@@ -10,6 +9,7 @@ namespace Genetic
         where T : IComparable<T>
     {
         public delegate void OnIterationComplete(GeneticAlgorithm<C, T> environment);
+        public delegate T FitnessFunction(C chromosome);
 
         #region ChromosomesComparator
         private readonly Dictionary<C, T> fitness_cache = new Dictionary<C, T>();
@@ -17,9 +17,9 @@ namespace Genetic
         private class ChromosomesComparator : IComparer<C>
         {
             private readonly GeneticAlgorithm<C, T> context;
-            private readonly IFitness<C, T> fitnessFunc;
+            private readonly FitnessFunction fitnessFunc;
 
-            public ChromosomesComparator(GeneticAlgorithm<C, T> algorithm, IFitness<C, T> fitness)
+            public ChromosomesComparator(GeneticAlgorithm<C, T> algorithm, FitnessFunction fitness)
             {
                 context = algorithm;
                 fitnessFunc = fitness;
@@ -30,7 +30,7 @@ namespace Genetic
                 T fit = default(T);
                 if (!context.fitness_cache.TryGetValue(chr, out fit))
                 {
-                    fit = fitnessFunc.Calculate(chr);
+                    fit = fitnessFunc(chr);
                     context.fitness_cache[chr] = fit;
                 }
                 return fit;
@@ -58,7 +58,7 @@ namespace Genetic
 
         public int Iteration { get; private set; } = 0;
 
-        public GeneticAlgorithm(Population<C> population, IFitness<C, T> fitnessFunc)
+        public GeneticAlgorithm(Population<C> population, FitnessFunction fitnessFunc)
         {
             Population = population;
             chromosomesComparator = new ChromosomesComparator(this, fitnessFunc);

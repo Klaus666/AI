@@ -133,9 +133,7 @@ namespace Render
                 brains.addChromosome(NeuralNetworkDrivenAgent.randomNeuralNetworkBrain());
             }
 
-            IFitness<OptimizableNeuralNetwork, double> fit = new TournamentEnvironmentFitness();
-
-            ga = new GeneticAlgorithm<OptimizableNeuralNetwork, double>(brains, fit);
+            ga = new GeneticAlgorithm<OptimizableNeuralNetwork, double>(brains, TournamentEnvironmentFitness.Calculate);
 
             ga.ParentChromosomesSurviveCount = parentalChromosomesSurviveCount;
         }
