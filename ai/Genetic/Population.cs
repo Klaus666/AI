@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Genetic
 {
-    public class Population<C> : IEnumerable<C>
+    public sealed class Population<C> : IEnumerable<C>
          where C : IChromosome<C>
     {
         private static readonly Random random = new Random();

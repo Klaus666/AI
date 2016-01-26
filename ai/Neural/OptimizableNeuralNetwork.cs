@@ -313,7 +313,7 @@ namespace Neural
         public new object Clone()
         {
             var clone = new OptimizableNeuralNetwork(Neurons.Length);
-            clone.NeuronsLinks = NeuronsLinks.Clone() as Links;
+            clone.NeuronsLinks = NeuronsLinks.Clone();
             clone.ActivationIterations = ActivationIterations;
             clone.Neurons = new Neuron[Neurons.Length];
             for (int n = 0; n < Neurons.Length; n++)

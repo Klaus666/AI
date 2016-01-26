@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Genetic
 {
-    public class GeneticAlgorithm<C, T>
+    public sealed class GeneticAlgorithm<C, T>
         where C : IChromosome<C>
         where T : IComparable<T>
     {

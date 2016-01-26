@@ -32,7 +32,7 @@ namespace Neural
 
         public void AddLink(int activatorNeuronNumber, int receiverNeuronNumber, double weight)
         {
-            NeuronsLinks.AddWeight(activatorNeuronNumber, receiverNeuronNumber, weight);
+            NeuronsLinks[activatorNeuronNumber, receiverNeuronNumber] = weight;
         }
 
         public void PutSignalToNeuron(int neuronIndx, double signalValue)
@@ -67,7 +67,7 @@ namespace Neural
                                     + " neurons. But there was trying to accsess neuron with index " + receiverNum);
 
                         var receiver = Neurons[receiverNum];
-                        double weight = NeuronsLinks.GetWeight(i, receiverNum);
+                        double weight = NeuronsLinks[i, receiverNum];
                         receiver.AddSignal(activatorSignal * weight);
                     }
                 }
@@ -114,13 +114,13 @@ namespace Neural
 
         public Links GetNeuronsLinks()
         {
-            return NeuronsLinks.Clone() as Links;
+            return NeuronsLinks.Clone();
         }
 
         public object Clone()
         {
             var clone = new NeuralNetwork(Neurons.Length);
-            clone.NeuronsLinks = NeuronsLinks.Clone() as Links;
+            clone.NeuronsLinks = NeuronsLinks.Clone();
             clone.ActivationIterations = ActivationIterations;
 
             clone.Neurons = new Neuron[Neurons.Length];

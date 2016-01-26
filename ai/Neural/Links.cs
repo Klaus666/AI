@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Neural
 {
-    public class Links : ICloneable
+    public sealed class Links
     {
         private Dictionary<int, Dictionary<int, double>> links = new Dictionary<int, Dictionary<int, double>>();
         private int totalLinksCount = 0;
@@ -18,25 +16,28 @@ namespace Neural
             else return new int[0];
         }
 
-        public double GetWeight(int activatorNumber, int receiverNumber)
+        public double this[int activatorNumber, int receiverNumber]
         {
-            if (links.ContainsKey(activatorNumber))
+            get
             {
-                var receiverNumToWeight = links[activatorNumber];
+                if (links.ContainsKey(activatorNumber))
+                {
+                    var receiverNumToWeight = links[activatorNumber];
 
-                if (receiverNumToWeight.ContainsKey(receiverNumber))
-                    return receiverNumToWeight[receiverNumber];
+                    if (receiverNumToWeight.ContainsKey(receiverNumber))
+                        return receiverNumToWeight[receiverNumber];
+                    else throw new ArgumentException();
+                }
                 else throw new ArgumentException();
             }
-            else throw new ArgumentException();
-        }
 
-        public void AddWeight(int activatorNumber, int receiverNumber, double weight)
-        {
-            if (!links.ContainsKey(activatorNumber))
-                links[activatorNumber] = new Dictionary<int, double>();
-            links[activatorNumber][receiverNumber] = weight;
-            totalLinksCount++;
+            set
+            {
+                if (!links.ContainsKey(activatorNumber))
+                    links[activatorNumber] = new Dictionary<int, double>();
+                links[activatorNumber][receiverNumber] = value;
+                totalLinksCount++;
+            }
         }
 
         public double[] GetAllWeights()
@@ -72,7 +73,7 @@ namespace Neural
             }
         }
 
-        public object Clone()
+        public Links Clone()
         {
             var clone = new Links();
             clone.totalLinksCount = totalLinksCount;
