@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Neural
 {
@@ -10,7 +6,7 @@ namespace Neural
     {
         protected Neuron[] Neurons;
         protected Links NeuronsLinks = new Links();
-        protected int ActivationIterations = 1;
+        public int ActivationIterations { get; set; } = 1;
 
         public NeuralNetwork() { }
 
@@ -30,10 +26,7 @@ namespace Neural
             Neurons[neuronNumber].SetFunctionAndParams(function, Params);
         }
 
-        public void AddLink(int activatorNeuronNumber, int receiverNeuronNumber, double weight)
-        {
-            NeuronsLinks[activatorNeuronNumber, receiverNeuronNumber] = weight;
-        }
+        public void AddLink(int activatorNeuronNumber, int receiverNeuronNumber, double weight) => NeuronsLinks[activatorNeuronNumber, receiverNeuronNumber] = weight;
 
         public void PutSignalToNeuron(int neuronIndx, double signalValue)
         {
@@ -73,17 +66,11 @@ namespace Neural
                 }
         }
 
-        public double[] GetWeightsOfLinks()
-        {
-            return NeuronsLinks.GetAllWeights();
-        }
+        public double[] GetWeightsOfLinks() => NeuronsLinks.GetAllWeights();
 
-        public void SetWeightsOfLinks(double[] weights)
-        {
-            NeuronsLinks.SetAllWeights(weights);
-        }
+        public void SetWeightsOfLinks(double[] weights) => NeuronsLinks.SetAllWeights(weights);
 
-        public Neuron[] GetNeurons()
+        public Neuron[] CloneNeurons()
         {
             var ret = new Neuron[Neurons.Length];
             for (int n = 0; n < Neurons.Length; n++)
@@ -92,30 +79,9 @@ namespace Neural
             return ret;
         }
 
-        public int GetNeuronsCount()
-        {
-            return Neurons.Length;
-        }
+        public int NeuronsCount => Neurons.Length;
 
-        public void SetNeurons(Neuron[] newNeurons)
-        {
-            Neurons = newNeurons;
-        }
-
-        public int GetActivationIterations()
-        {
-            return ActivationIterations;
-        }
-
-        public void SetActivationIterations(int activationIterations)
-        {
-            ActivationIterations = activationIterations;
-        }
-
-        public Links GetNeuronsLinks()
-        {
-            return NeuronsLinks.Clone();
-        }
+        public Links GetNeuronsLinks() => NeuronsLinks.Clone();
 
         public object Clone()
         {

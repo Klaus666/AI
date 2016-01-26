@@ -58,7 +58,7 @@ namespace MultiagentEnvironment
 
                 activateNeuralNetwork(nnInputs);
 
-                int neuronsCount = brain.GetNeuronsCount();
+                int neuronsCount = brain.NeuronsCount;
                 double deltaAngle = brain.GetAfterActivationSignal(neuronsCount - 2);
                 double deltaSpeed = brain.GetAfterActivationSignal(neuronsCount - 1);
 

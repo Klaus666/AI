@@ -62,8 +62,8 @@ namespace Neural
 
         public OptimizableNeuralNetwork(NeuralNetwork nn)
         {
-            ActivationIterations = nn.GetActivationIterations();
-            Neurons = nn.GetNeurons();
+            ActivationIterations = nn.ActivationIterations;
+            Neurons = nn.CloneNeurons();
             NeuronsLinks = nn.GetNeuronsLinks();
         }
 
