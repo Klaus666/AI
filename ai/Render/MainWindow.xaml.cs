@@ -90,16 +90,17 @@ namespace Render
         {
             new Thread(() => {
 
+                var EvolveStartTime = DateTime.Now;
+
                 ga.Evolve(iterCount);
                 populationNumber += iterCount;
 
                 NeuralNetwork newBrain = ga.GetBest();
                 setAgentBrains(newBrain);
 
-                Dispatcher.Invoke(() =>
-                {
-                    MessageBox.Show("evolved");
-                });
+                var EvolveEndTime = DateTime.Now;
+
+                Dispatcher.Invoke(() => { MessageBox.Show($"Evolved within {(EvolveEndTime - EvolveStartTime).TotalSeconds} s"); });
 
             }).Start();
         }
