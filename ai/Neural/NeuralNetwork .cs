@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Neural
 {
-    public class NeuralNetwork : ICloneable
+    public class NeuralNetwork
     {
         protected Neuron[] Neurons;
         protected Links NeuronsLinks = new Links();
-        protected int ActivationIterations = 1;
+        public int ActivationIterations { get; set; } = 1;
 
         public NeuralNetwork() { }
 
@@ -30,10 +26,7 @@ namespace Neural
             Neurons[neuronNumber].SetFunctionAndParams(function, Params);
         }
 
-        public void AddLink(int activatorNeuronNumber, int receiverNeuronNumber, double weight)
-        {
-            NeuronsLinks.AddWeight(activatorNeuronNumber, receiverNeuronNumber, weight);
-        }
+        public void AddLink(int activatorNeuronNumber, int receiverNeuronNumber, double weight) => NeuronsLinks[activatorNeuronNumber, receiverNeuronNumber] = weight;
 
         public void PutSignalToNeuron(int neuronIndx, double signalValue)
         {
@@ -46,7 +39,7 @@ namespace Neural
         public double GetAfterActivationSignal(int neuronIndx)
         {
             if (neuronIndx < Neurons.Length)
-                return Neurons[neuronIndx].GetAfterActivationSignal();
+                return Neurons[neuronIndx].AfterActivationSignal;
             else
                 throw new ArgumentException();
         }
@@ -58,7 +51,7 @@ namespace Neural
                 {
                     var activator = Neurons[i];
                     activator.Activate();
-                    double activatorSignal = activator.GetAfterActivationSignal();
+                    double activatorSignal = activator.AfterActivationSignal;
 
                     foreach (var receiverNum in NeuronsLinks.GetReceivers(i))
                     {
@@ -67,67 +60,44 @@ namespace Neural
                                     + " neurons. But there was trying to accsess neuron with index " + receiverNum);
 
                         var receiver = Neurons[receiverNum];
-                        double weight = NeuronsLinks.GetWeight(i, receiverNum);
+                        double weight = NeuronsLinks[i, receiverNum];
                         receiver.AddSignal(activatorSignal * weight);
                     }
                 }
         }
 
-        public double[] GetWeightsOfLinks()
-        {
-            return NeuronsLinks.GetAllWeights();
-        }
+        public double[] GetWeightsOfLinks() => NeuronsLinks.GetAllWeights();
 
-        public void SetWeightsOfLinks(double[] weights)
-        {
-            NeuronsLinks.SetAllWeights(weights);
-        }
+        public void SetWeightsOfLinks(double[] weights) => NeuronsLinks.SetAllWeights(weights);
 
-        public Neuron[] GetNeurons()
+        public Neuron[] CloneNeurons()
         {
             var ret = new Neuron[Neurons.Length];
             for (int n = 0; n < Neurons.Length; n++)
-                ret[n] = Neurons[n].Clone() as Neuron;
+                ret[n] = Neurons[n].Clone();
 
             return ret;
         }
 
-        public int GetNeuronsCount()
-        {
-            return Neurons.Length;
-        }
+        public int NeuronsCount => Neurons.Length;
 
-        public void SetNeurons(Neuron[] newNeurons)
-        {
-            Neurons = newNeurons;
-        }
+        public Links GetNeuronsLinks() => NeuronsLinks.Clone();
 
-        public int GetActivationIterations()
-        {
-            return ActivationIterations;
-        }
-
-        public void SetActivationIterations(int activationIterations)
-        {
-            ActivationIterations = activationIterations;
-        }
-
-        public Links GetNeuronsLinks()
-        {
-            return NeuronsLinks.Clone() as Links;
-        }
-
-        public object Clone()
+        public virtual NeuralNetwork Clone()
         {
             var clone = new NeuralNetwork(Neurons.Length);
-            clone.NeuronsLinks = NeuronsLinks.Clone() as Links;
+            CopyParameters(clone);
+            return clone;
+        }
+
+        protected void CopyParameters(NeuralNetwork clone)
+        {
+            clone.NeuronsLinks = NeuronsLinks.Clone();
             clone.ActivationIterations = ActivationIterations;
 
             clone.Neurons = new Neuron[Neurons.Length];
             for (int n = 0; n < Neurons.Length; n++)
-                clone.Neurons[n] = Neurons[n].Clone() as Neuron;
-
-            return clone;
+                clone.Neurons[n] = Neurons[n].Clone();
         }
     }
 }

@@ -4,32 +4,30 @@ using System;
 
 namespace MultiagentEnvironment
 {
-    public class TournamentEnvironmentFitness : IFitness<OptimizableNeuralNetwork, double>
+    public static class TournamentEnvironmentFitness
     {
 
-        class FitnessObserver : EatenFoodObserver
+        private class FitnessObserver : EatenFoodObserver
         {
-            private TournamentEnvironmentFitness owner;
             int width;
             int height;
 
-            public FitnessObserver(TournamentEnvironmentFitness Parent, int width, int height)
+            public FitnessObserver(int width, int height)
             {
-                owner = Parent;
                 this.width = width;
                 this.height = height;
             }
 
             protected void addRandomPieceOfFood(AgentsEnvironment env)
             {
-                Food newFood = owner.newPieceOfFood(width, height);
-                env.addAgent(newFood);
+                Food newFood = newPieceOfFood(width, height);
+                env.Add(newFood);
             }
         }
 
         private static Random random = new Random();
 
-        public double Calculate(OptimizableNeuralNetwork chromosome)
+        public static double Calculate(OptimizableNeuralNetwork chromosome)
         {
             // TODO maybe, its better to initialize these parameters in constructor
             const int width = 200;
@@ -49,17 +47,17 @@ namespace MultiagentEnvironment
                 NeuralNetworkDrivenAgent agent = new NeuralNetworkDrivenAgent(x, y, direction);
                 agent.setBrain(chromosome.Clone() as NeuralNetwork);
 
-                env.addAgent(agent);
+                env.Add(agent);
             }
 
             for (int i = 0; i < foodCount; i++)
             {
                 Food food = newPieceOfFood(width, height);
-                env.addAgent(food);
+                env.Add(food);
             }
 
-            EatenFoodObserver tournamentListener = new FitnessObserver(this, width, height);
-            env.addListener(tournamentListener);
+            EatenFoodObserver tournamentListener = new FitnessObserver(width, height);
+            env.AgentEvent += tournamentListener.notify;
 
             for (int i = 0; i < environmentIterations; i++)
             {
@@ -70,7 +68,7 @@ namespace MultiagentEnvironment
             return 1.0 / score;
         }
 
-        protected Food newPieceOfFood(int width, int height)
+        private static Food newPieceOfFood(int width, int height)
         {
             Food food = new Food(random.Next(width), random.Next(height));
             return food;

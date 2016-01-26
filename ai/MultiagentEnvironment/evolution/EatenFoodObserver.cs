@@ -1,33 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MultiagentEnvironment
 {
-    public class EatenFoodObserver : AgentsEnvironmentObserver
+    public class EatenFoodObserver
     {
-
         protected const double minEatDistance = 5;
 
         protected const double maxFishesDistance = 5;
 
         private Random random = new Random();
-
+        
         private double score = 0;
 
         public virtual void notify(AgentsEnvironment env) {
-            var eatenFood = this.getEatenFood(env);
-            this.score += eatenFood.Count;
+            var eatenFood = getEatenFood(env);
+            score += eatenFood.Count;
 
-            LinkedList<Agent> collidedFishes = this.getCollidedFishes(env);
-            this.score -= collidedFishes.Count * 0.5;
+            LinkedList<Agent> collidedFishes = getCollidedFishes(env);
+            score -= collidedFishes.Count * 0.5;
 
-            this.removeEatenAndCreateNewFood(env, eatenFood);
+            removeEatenAndCreateNewFood(env, eatenFood);
         }
 
         private LinkedList<Agent> getCollidedFishes(AgentsEnvironment env) {
             LinkedList<Agent> collidedFishes = new LinkedList<Agent>();
 
-            List<Agent> allFishes = this.getFishes(env);
+            List<Agent> allFishes = getFishes(env);
             int fishesCount = allFishes.Count;
 
             for (int i = 0; i < (fishesCount - 1); i++)
@@ -36,7 +36,7 @@ namespace MultiagentEnvironment
                 for (int j = i + 1; j < fishesCount; j++)
                 {
                     Agent secondFish = allFishes[j];
-                    double distanceToSecondFish = this.module(firstFish.getX() - secondFish.getX(), firstFish.getY() - secondFish.getY());
+                    double distanceToSecondFish = module(firstFish.X - secondFish.X, firstFish.Y - secondFish.Y);
                     if (distanceToSecondFish < maxFishesDistance)
                     {
                         collidedFishes.AddLast(secondFish);
@@ -50,11 +50,11 @@ namespace MultiagentEnvironment
             LinkedList<Food> eatenFood = new LinkedList<Food>();
 
             
-            foreach (Food food in this.getFood(env))
+            foreach (Food food in getFood(env))
             {
-                foreach (Agent fish in this.getFishes(env))
+                foreach (Agent fish in getFishes(env))
                 {
-                    double distanceToFood = this.module(food.getX() - fish.getX(), food.getY() - fish.getY());
+                    double distanceToFood = module(food.X - fish.X, food.Y - fish.Y);
                     if (distanceToFood < minEatDistance)
                     {
                         eatenFood.AddLast(food);
@@ -68,22 +68,22 @@ namespace MultiagentEnvironment
         protected void removeEatenAndCreateNewFood(AgentsEnvironment env, IEnumerable<Food> eatenFood) {
             foreach (Food food in eatenFood)
             {
-                env.removeAgent(food);
+                env.Remove(food);
 
-                this.addRandomPieceOfFood(env);
+                addRandomPieceOfFood(env);
             }
         }
 
         protected virtual void addRandomPieceOfFood(AgentsEnvironment env) {
-            int x = this.random.Next(env.getWidth());
-            int y = this.random.Next(env.getHeight());
+            int x = random.Next(env.Width);
+            int y = random.Next(env.Height);
             Food newFood = new Food(x, y);
-            env.addAgent(newFood);
+            env.Add(newFood);
         }
 
         private List<Food> getFood(AgentsEnvironment env) {
             List<Food> food = new List<Food>();
-            foreach (Food f in env.filter<Food>()) {
+            foreach (Food f in env.getAgents().OfType<Food>()) {
                 food.Add(f);
             }
             return food;
@@ -92,7 +92,7 @@ namespace MultiagentEnvironment
         private List<Agent> getFishes(AgentsEnvironment env)
         {
             List<Agent> fishes = new List<Agent>();
-            foreach (Agent agent in env.filter<Agent>()) {
+            foreach (Agent agent in env.getAgents().OfType<Agent>()) {
                 fishes.Add(agent);
             }
             return fishes;
@@ -100,15 +100,13 @@ namespace MultiagentEnvironment
 
         public double getScore()
         {
-            if (this.score < 0)
+            if (score < 0)
             {
                 return 0;
             }
-            return this.score;
+            return score;
         }
 
         protected double module(double vx1, double vy1) => Math.Sqrt((vx1 * vx1) + (vy1 * vy1));
-
     }
-
 }
