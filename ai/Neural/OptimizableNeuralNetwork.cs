@@ -6,7 +6,7 @@ using System.Linq;
 namespace Neural
 {
 
-    public class OptimizableNeuralNetwork : NeuralNetwork, IChromosome<OptimizableNeuralNetwork>, ICloneable
+    public class OptimizableNeuralNetwork : NeuralNetwork, IChromosome<OptimizableNeuralNetwork>
     {
         private static class GaussianRandom
         {
@@ -62,8 +62,8 @@ namespace Neural
 
         public OptimizableNeuralNetwork(NeuralNetwork nn)
         {
-            ActivationIterations = nn.GetActivationIterations();
-            Neurons = nn.GetNeurons();
+            ActivationIterations = nn.ActivationIterations;
+            Neurons = nn.CloneNeurons();
             NeuronsLinks = nn.GetNeuronsLinks();
         }
 
@@ -265,7 +265,7 @@ namespace Neural
                     // this.random.nextDouble()) * neuronParamsMutationInterval;
                     Params[j] = param;
                 }
-                n.SetFunctionAndParams(n.GetFunction(), Params);
+                n.SetFunctionAndParams(n.TransferFunction, Params);
                 used.Add(i);
             }
         }
@@ -310,15 +310,10 @@ namespace Neural
                 weights[left + i] = subListOfWeights[i];
         }
 
-        public new object Clone()
+        public override NeuralNetwork Clone()
         {
             var clone = new OptimizableNeuralNetwork(Neurons.Length);
-            clone.NeuronsLinks = NeuronsLinks.Clone() as Links;
-            clone.ActivationIterations = ActivationIterations;
-            clone.Neurons = new Neuron[Neurons.Length];
-            for (int n = 0; n < Neurons.Length; n++)
-                clone.Neurons[n] = Neurons[n].Clone() as Neuron;
-
+            CopyParameters(clone);
             return clone;
         }
     }

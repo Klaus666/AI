@@ -5,22 +5,15 @@ using System.Linq;
 
 namespace Genetic
 {
-    public class Population<C> : IEnumerable<C>
+    public sealed class Population<C> : IEnumerable<C>
          where C : IChromosome<C>
     {
-        private const int DEFAULT_NUMBER_OF_CHROMOSOMES = 32;
-        private List<C> chromosomes = new List<C>(DEFAULT_NUMBER_OF_CHROMOSOMES);
         private static readonly Random random = new Random();
+        private List<C> chromosomes = new List<C>(22);
 
-        public void addChromosome(C chromosome)
-        {
-            chromosomes.Add(chromosome);
-        }
+        public void Add(C chromosome) => chromosomes.Add(chromosome);
 
-        public int GetSize()
-        {
-            return chromosomes.Count;
-        }
+        public int Size => chromosomes.Count;
 
         public C GetRandomChromosome()
         {
@@ -29,10 +22,7 @@ namespace Genetic
             return chromosomes[indx];
         }
 
-        public C GetChromosomeByIndex(int indx)
-        {
-            return chromosomes[indx];
-        }
+        public C this[int indx] => chromosomes[indx];
 
         public void SortPopulationByFitness(IComparer<C> chromosomesComparator)
         {
@@ -40,19 +30,10 @@ namespace Genetic
             chromosomes.Sort(chromosomesComparator);
         }
 
-        public void Trim(int len)
-        {
-            chromosomes = chromosomes.Take(len).ToList();
-        }
+        public void Trim(int len) => chromosomes = chromosomes.Take(len).ToList();
 
-        public IEnumerator<C> GetEnumerator()
-        {
-            return chromosomes.GetEnumerator();
-        }
+        public IEnumerator<C> GetEnumerator() => chromosomes.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return chromosomes.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => chromosomes.GetEnumerator();
     }
 }
