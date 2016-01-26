@@ -2,76 +2,32 @@
 
 namespace MultiagentEnvironment
 {
-    public abstract class Agent : AbstractAgent
+    public abstract class Agent : IAbstractAgent
     {
+        public double X { get; set; }
+        public double Y { get; set; }
 
-        private double x;
+        public double Angle { get; protected set; }
 
-        private double y;
-
-        private double angle;
-
-        private double speed;
+        protected double Speed { get; set; }
 
         public Agent(double x, double y, double angle) {
-            this.x = x;
-            this.y = y;
-            this.speed = 0;
-            this.angle = angle;
+            X = x;
+            Y = y;
+            Speed = 0;
+            Angle = angle;
         }
 
-        public void move() {
-            double rx = -Math.Sin(this.angle);
-            double ry = Math.Cos(this.angle);
-            this.x += rx * this.speed;
-            this.y += ry * this.speed;
+        public void Move() {
+            X += Rx * Speed;
+            Y += Ry * Speed;
         }
 
-        
-        public double getX() {
-            return this.x;
-        }
+        public double Rx => -Math.Sin(Angle);
 
-        public double getY() {
-            return this.y;
-        }
+        public double Ry => Math.Cos(Angle);
 
-        public void setX(double x) {
-            this.x = x;
-        }
-
-        public void setY(double y) {
-            this.y = y;
-        }
-
-        public double getSpeed() {
-            return this.speed;
-        }
-
-        public void setSpeed(double v) {
-            this.speed = v;
-        }
-
-        public double getAngle() {
-            return this.angle;
-        }
-
-        public void setAngle(double angle) {
-            this.angle = angle;
-        }
-
-        public double getRx() {
-            double rx = -Math.Sin(this.angle);
-            return rx;
-        }
-
-        public double getRy() {
-            double ry = Math.Cos(this.angle);
-            return ry;
-        }
-
-        public abstract void interact(AgentsEnvironment env);
-
+        public abstract void Interact(AgentsEnvironment env);
     }
 
 }

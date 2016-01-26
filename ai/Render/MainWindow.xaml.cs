@@ -55,8 +55,8 @@ namespace Render
             {
                 if (regenerateFood)
                 {
-                    Food food = createRandomFood(env.getWidth(), env.getHeight());
-                    env.addAgent(food);
+                    Food food = createRandomFood(env.Width, env.Height);
+                    env.Add(food);
                     owner.Dispatcher.Invoke(() =>
                     {
                         owner.Agents.Add(new FoodPresenter(food));
@@ -171,13 +171,13 @@ namespace Render
 
                 Agents.Add(new ConsumerPresenter(agent));
 
-                environment.addAgent(agent);
+                environment.Add(agent);
             }
 
             for (int i = 0; i < 10; i++)
             {
                 Food food = createRandomFood(w, h);
-                environment.addAgent(food);
+                environment.Add(food);
                 Agents.Add(new FoodPresenter(food));
             }
 
@@ -196,10 +196,10 @@ namespace Render
                             {
                                 foreach (var pres in Agents)
                                 {
-                                    pres.X = pres.agent.getX() * 1000 / w;
-                                    pres.Y = pres.agent.getY() * 1000 / h;
+                                    pres.X = pres.agent.X * 1000 / w;
+                                    pres.Y = pres.agent.Y * 1000 / h;
                                     var cons = pres as ConsumerPresenter;
-                                    if (cons != null) cons.Angle = (cons.agent as NeuralNetworkDrivenAgent).getAngle() * 180 / Math.PI;
+                                    if (cons != null) cons.Angle = (cons.agent as NeuralNetworkDrivenAgent).Angle * 180 / Math.PI;
                                 }
                             });
                         }
@@ -230,7 +230,7 @@ namespace Render
             var ra = Rnd.NextDouble();
 
             var agent = new NeuralNetworkDrivenAgent(rx, ry, ra);
-            environment.addAgent(agent);
+            environment.Add(agent);
             Agents.Add(new ConsumerPresenter(agent) { X = 1000.0 * rx, Y = 1000.0 * ry, Angle = 360.0 * ra });
         }
 
@@ -242,9 +242,9 @@ namespace Render
 
     public abstract class AgentPresenter : Control
     {
-        public AbstractAgent agent { get; }
+        public IAbstractAgent agent { get; }
 
-        public AgentPresenter(AbstractAgent Agent)
+        public AgentPresenter(IAbstractAgent Agent)
         {
             agent = Agent;
         }
@@ -271,7 +271,7 @@ namespace Render
 
     public class FoodPresenter : AgentPresenter
     {
-        public FoodPresenter(AbstractAgent Agent) : base(Agent) { }
+        public FoodPresenter(IAbstractAgent Agent) : base(Agent) { }
 
         static FoodPresenter()
         {

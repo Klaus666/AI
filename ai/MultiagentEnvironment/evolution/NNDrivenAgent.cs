@@ -50,7 +50,7 @@ namespace MultiagentEnvironment
          * TODO Maybe consider to use non-blocking technique. But at the moment this
          * simplest solution doesn't cause any overheads
          */
-        public override void interact(AgentsEnvironment env)
+        public override void Interact(AgentsEnvironment env)
         {
             lock (ThisLock)
             {
@@ -65,13 +65,10 @@ namespace MultiagentEnvironment
                 deltaSpeed = avoidNaNAndInfinity(deltaSpeed);
                 deltaAngle = avoidNaNAndInfinity(deltaAngle);
 
-                double newSpeed = normalizeSpeed(getSpeed() + deltaSpeed);
-                double newAngle = getAngle() + normalizeDeltaAngle(deltaAngle);
+                Angle += normalizeDeltaAngle(deltaAngle);
+                Speed = normalizeSpeed(Speed + deltaSpeed);
 
-                setAngle(newAngle);
-                setSpeed(newSpeed);
-
-                move();
+                Move();
             }
         }
 
@@ -130,21 +127,16 @@ namespace MultiagentEnvironment
 
             var nnInputs = new List<double>();
 
-            double rx = getRx();
-            double ry = getRy();
-
-            double x = getX();
-            double y = getY();
 
             if (nearestFood != null)
             {
-                double foodDirectionVectorX = nearestFood.getX() - x;
-                double foodDirectionVectorY = nearestFood.getY() - y;
+                double foodDirectionVectorX = nearestFood.X - X;
+                double foodDirectionVectorY = nearestFood.Y - Y;
 
                 // left/right cos
                 double foodDirectionCosTeta =
-                        Math.Sign(pseudoScalarProduct(rx, ry, foodDirectionVectorX, foodDirectionVectorY))
-                                * cosTeta(rx, ry, foodDirectionVectorX, foodDirectionVectorY);
+                        Math.Sign(pseudoScalarProduct(Rx, Ry, foodDirectionVectorX, foodDirectionVectorY))
+                                * cosTeta(Rx, Ry, foodDirectionVectorX, foodDirectionVectorY);
 
                 nnInputs.Add(FOOD);
                 nnInputs.Add(nearestFoodDist);
@@ -160,13 +152,13 @@ namespace MultiagentEnvironment
 
             if (nearestAgent != null)
             {
-                double agentDirectionVectorX = nearestAgent.getX() - x;
-                double agentDirectionVectorY = nearestAgent.getY() - y;
+                double agentDirectionVectorX = nearestAgent.X - X;
+                double agentDirectionVectorY = nearestAgent.Y - Y;
 
                 // left/right cos
                 double agentDirectionCosTeta =
-                        Math.Sign(pseudoScalarProduct(rx, ry, agentDirectionVectorX, agentDirectionVectorY))
-                                * cosTeta(rx, ry, agentDirectionVectorX, agentDirectionVectorY);
+                        Math.Sign(pseudoScalarProduct(Rx, Ry, agentDirectionVectorX, agentDirectionVectorY))
+                                * cosTeta(Rx, Ry, agentDirectionVectorX, agentDirectionVectorY);
 
                 nnInputs.Add(AGENT);
                 nnInputs.Add(nearestAgentDist);
@@ -182,15 +174,15 @@ namespace MultiagentEnvironment
             return nnInputs;
         }
 
-        protected bool inSight(AbstractAgent agent)
+        protected bool inSight(IAbstractAgent agent)
         {
-            double crossProduct = this.cosTeta(this.getRx(), this.getRy(), agent.getX() - this.getX(), agent.getY() - this.getY());
+            double crossProduct = cosTeta(Rx, Ry, agent.X - X, agent.Y - Y);
             return (crossProduct > 0);
         }
 
-        protected double distanceTo(AbstractAgent agent)
+        protected double distanceTo(IAbstractAgent agent)
         {
-            return this.module(agent.getX() - this.getX(), agent.getY() - this.getY());
+            return module(agent.X - X, agent.Y - Y);
         }
 
         protected double cosTeta(double vx1, double vy1, double vx2, double vy2)

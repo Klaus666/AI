@@ -36,7 +36,7 @@ namespace MultiagentEnvironment
                 for (int j = i + 1; j < fishesCount; j++)
                 {
                     Agent secondFish = allFishes[j];
-                    double distanceToSecondFish = this.module(firstFish.getX() - secondFish.getX(), firstFish.getY() - secondFish.getY());
+                    double distanceToSecondFish = this.module(firstFish.X - secondFish.X, firstFish.Y - secondFish.Y);
                     if (distanceToSecondFish < maxFishesDistance)
                     {
                         collidedFishes.AddLast(secondFish);
@@ -54,7 +54,7 @@ namespace MultiagentEnvironment
             {
                 foreach (Agent fish in this.getFishes(env))
                 {
-                    double distanceToFood = this.module(food.getX() - fish.getX(), food.getY() - fish.getY());
+                    double distanceToFood = this.module(food.X - fish.X, food.Y - fish.Y);
                     if (distanceToFood < minEatDistance)
                     {
                         eatenFood.AddLast(food);
@@ -68,17 +68,17 @@ namespace MultiagentEnvironment
         protected void removeEatenAndCreateNewFood(AgentsEnvironment env, IEnumerable<Food> eatenFood) {
             foreach (Food food in eatenFood)
             {
-                env.removeAgent(food);
+                env.Remove(food);
 
                 this.addRandomPieceOfFood(env);
             }
         }
 
         protected virtual void addRandomPieceOfFood(AgentsEnvironment env) {
-            int x = this.random.Next(env.getWidth());
-            int y = this.random.Next(env.getHeight());
+            int x = this.random.Next(env.Width);
+            int y = this.random.Next(env.Height);
             Food newFood = new Food(x, y);
-            env.addAgent(newFood);
+            env.Add(newFood);
         }
 
         private List<Food> getFood(AgentsEnvironment env) {

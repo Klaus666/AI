@@ -14,15 +14,13 @@ namespace MultiagentEnvironment
             this.angle = angle;
         }
 
-        public override void interact(AgentsEnvironment env) {
-            this.move(env);
+        public override void Interact(AgentsEnvironment env) {
+            move(env);
         }
 
         protected void move(AgentsEnvironment env) {
-            double rx = -Math.Sin(this.angle);
-            double ry = Math.Cos(this.angle);
-            this.setX(this.getX() + (rx * this.speed));
-            this.setY(this.getY() + (ry * this.speed));
+            X += -Math.Sin(angle) * speed;
+            Y += Math.Cos(angle) * speed;
         }
     }
 }

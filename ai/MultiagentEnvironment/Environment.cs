@@ -5,33 +5,23 @@ namespace MultiagentEnvironment
     public class AgentsEnvironment
     {
 
-        private int width;
+        public int Width { get; private set; }
 
-        private int height;
+        public int Height { get; private set; }
 
-        private List<AbstractAgent> agents = new List<AbstractAgent>();
+        private List<IAbstractAgent> agents = new List<IAbstractAgent>();
 
         private List<AgentsEnvironmentObserver> listeners = new List<AgentsEnvironmentObserver>();
 
         public AgentsEnvironment(int width, int height)
         {
-            this.width = width;
-            this.height = height;
+            Width = width;
+            Height = height;
         }
 
         public void addListener(AgentsEnvironmentObserver listener)
         {
-            this.listeners.Add(listener);
-        }
-
-        public int getWidth()
-        {
-            return this.width;
-        }
-
-        public int getHeight()
-        {
-            return this.height;
+            listeners.Add(listener);
         }
 
         private readonly object this_lock = new object();
@@ -40,10 +30,10 @@ namespace MultiagentEnvironment
         {
             lock (this_lock)
             {
-                foreach (AbstractAgent agent in this.getAgents())
+                foreach (IAbstractAgent agent in getAgents())
                 {
-                    agent.interact(this);
-                    this.avoidMovingOutsideOfBounds(agent);
+                    agent.Interact(this);
+                    avoidMovingOutsideOfBounds(agent);
                 }
                 foreach (AgentsEnvironmentObserver l in this.listeners)
                 {
@@ -52,59 +42,41 @@ namespace MultiagentEnvironment
             }
         }
 
-        /**
-         * avoid moving outside of environment
-         */
-        private void avoidMovingOutsideOfBounds(AbstractAgent agent)
+        private void avoidMovingOutsideOfBounds(IAbstractAgent agent)
         {
-            double newX = agent.getX();
-            double newY = agent.getY();
-            if (newX < 0)
-            {
-                newX = this.width - 1;
-            }
-            if (newY < 0)
-            {
-                newY = this.height - 1;
-            }
-            if (newX > this.width)
-            {
-                newX = 1;
-            }
-            if (newY > this.height)
-            {
-                newY = 1;
-            }
+            double newX = agent.X;
+            double newY = agent.Y;
+            if (newX < 0) newX = Width - 1;
+            if (newY < 0) newY = Height - 1;
+            if (newX > Width) newX = 1;
+            if (newY > Height) newY = 1;
 
-            agent.setX(newX);
-            agent.setY(newY);
+            agent.X = newX;
+            agent.Y = newY;
         }
 
-        public LinkedList<AbstractAgent> getAgents()
+        public LinkedList<IAbstractAgent> getAgents()
         {
+#warning linked?
             // to avoid concurrent modification exception
-            return new LinkedList<AbstractAgent>(this.agents);
+            return new LinkedList<IAbstractAgent>(agents);
         }
 
-        public void addAgent(AbstractAgent agent)
+        public void Add(IAbstractAgent agent)
         {
-            lock (this_lock)
-            {
-                this.agents.Add(agent);
-            }
+            lock (this_lock) agents.Add(agent);
         }
 
-        public void removeAgent(AbstractAgent agent)
+        public void Remove(IAbstractAgent agent)
         {
-            lock (this_lock)
-                this.agents.Remove(agent);
+            lock (this_lock) agents.Remove(agent);
         }
 
 
-        public IEnumerable<T> filter<T>() where T : AbstractAgent
+        public IEnumerable<T> filter<T>() where T : IAbstractAgent
         {
             LinkedList<T> filtered = new LinkedList<T>();
-            foreach (AbstractAgent agent in this.getAgents())
+            foreach (IAbstractAgent agent in this.getAgents())
             {
                 if (agent is T)
                 {

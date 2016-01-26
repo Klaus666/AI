@@ -1,17 +1,11 @@
 ﻿namespace MultiagentEnvironment
 {
-    public interface AbstractAgent
+    public interface IAbstractAgent
     {
 
-        void interact(AgentsEnvironment env);
+        void Interact(AgentsEnvironment env);
 
-        double getX();
-
-        double getY();
-
-        void setX(double x);
-
-        void setY(double y);
-
+        double X { get; set; }
+        double Y { get; set; }
     }
 }

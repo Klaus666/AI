@@ -21,7 +21,7 @@ namespace MultiagentEnvironment
             protected void addRandomPieceOfFood(AgentsEnvironment env)
             {
                 Food newFood = newPieceOfFood(width, height);
-                env.addAgent(newFood);
+                env.Add(newFood);
             }
         }
 
@@ -47,13 +47,13 @@ namespace MultiagentEnvironment
                 NeuralNetworkDrivenAgent agent = new NeuralNetworkDrivenAgent(x, y, direction);
                 agent.setBrain(chromosome.Clone() as NeuralNetwork);
 
-                env.addAgent(agent);
+                env.Add(agent);
             }
 
             for (int i = 0; i < foodCount; i++)
             {
                 Food food = newPieceOfFood(width, height);
-                env.addAgent(food);
+                env.Add(food);
             }
 
             EatenFoodObserver tournamentListener = new FitnessObserver(width, height);

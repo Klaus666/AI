@@ -1,35 +1,16 @@
 ﻿namespace MultiagentEnvironment
 {
-    public class Food : AbstractAgent
+    public class Food : IAbstractAgent
     {
 
-        private double x;
-
-        private double y;
+        public double X { get; set; }
+        public double Y { get; set; }
 
         public Food(double x, double y) {
-            this.x = x;
-            this.y = y;
+            X = x;
+            Y = y;
         }
 
-        public double getX() {
-            return this.x;
-        }
-
-        public double getY() {
-            return this.y;
-        }
-
-        public void setX(double x) {
-            this.x = x;
-        }
-
-        public void setY(double y) {
-            this.y = y;
-        }
-
-        public virtual void interact(AgentsEnvironment env) {
-            // Stub
-        }
+        public virtual void Interact(AgentsEnvironment env) { }
     }
 }
